@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k7api-deployment
+spec:
+  selector:
+    matchLabels:
+      app: k7api-pod
+  template:
+    metadata:
+      labels:
+        app: k7api-pod
+    spec:
+      containers:
+      - name: k7api-container-k7s
+        image: k7api:dev
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+        livenessProbe:
+          httpGet:
+           path: /api/values
+           port: 80
+        readinessProbe:
+          httpGet:
+           path: /api/values
+           port: 80
+        env:
+          - name: ASPNETCORE_URLS
+            value: http://+:80 
